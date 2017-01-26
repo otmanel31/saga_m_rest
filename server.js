@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const path = require('path')
 const alerts = require('./routes/alerts')
-app.use('/alerts', alerts())
+app.use('/gps', alerts())
 
 const server = app.listen(3000, function() {
     var host = server.address().address
