@@ -14,9 +14,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.14.0",
-    "sequelize": "^3.30.0",
-    "sequelize-cli": "^2.5.1",
-    "sqlite3": "^3.1.8"
+    "express": "^4.14.0"
   }
 }
