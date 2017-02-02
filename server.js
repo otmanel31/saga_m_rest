@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 
 //schema database
 var GpsSchema = mongoose.Schema({
+    uuid_user: Number,
     timestamp: Date,
     lattitude: Number,
     longitude: Number,
@@ -24,12 +25,13 @@ db.on('error', console.error.bind(console, 'connection error:'))
 db.once('open', function() {
     console.log("connected on DB SAGA")
 })
-
 mongoose.connect('mongodb://localhost/saga')
 
+// Define ROUTE
 app.use('/alerts', alerts())
 app.use('/gps', gps(coorGPS))
 
+// Server connection
 const server = app.listen(3000, function() {
     var host = server.address().address
     var port = server.address().port
