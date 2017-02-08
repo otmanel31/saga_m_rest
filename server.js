@@ -1,10 +1,9 @@
 const fs = require('fs')
 const http = require('http')
 const https = require('https')
-var bodyParser = require('body-parser');
-var morgan = require('morgan');
-const mongoose = require('mongoose');
-
+const bodyParser = require('body-parser')
+const morgan = require('morgan')
+const mongoose = require('mongoose')
 const express = require('express')
 const app = express()
 const path = require('path')
@@ -13,6 +12,8 @@ const alerts = require('./routes/alerts')
 const events = require('./routes/events')
 
 const gps = require('./routes/location')
+const authentication = require('./routes/authentication')
+
 const models = require('./models')
 const config = require('./config')
 
@@ -28,21 +29,47 @@ db.once('open', function() {
 })
 mongoose.connect(config.database)
 
-app.set('superSecret', config.secret); // secret variable
-
 // use body parser so we can get info from POST and/or URL parameters
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 // use morgan to log requests to the console
-app.use(morgan('dev'));
+app.use(morgan('dev'))
 
 /*  =================================
     ROUTES
     =================================*/
+
 app.use('/alerts', alerts())
 app.use('/location', gps(models.coorGPS))
 app.use('/events', events(db))
+
+/*  =================================
+    DEVELOPMENT SETUP
+    =================================*/
+app.get('/setup', function(req, res) {
+
+    // create a sample user
+    let foo = new models.User({
+        name: 'Bar',
+        password: 'password',
+        admin: false
+    })
+
+    // save the sample user
+    foo.save(function(err) {
+        if (err) throw err
+
+        console.log('User saved successfully')
+        res.json({ success: true })
+    })
+})
+
+/*  =================================
+    AUTHENTICATED ROUTES
+    =================================*/
+
+app.use('/api', authentication) // following routes will require authentication
 
 
 /*  =================================
