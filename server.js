@@ -2,22 +2,10 @@ const express = require('express')
 const app = express()
 const path = require('path')
 const alerts = require('./routes/alerts')
-const gps = require('./routes/gps')
+const gps = require('./routes/location')
 const mongoose = require('mongoose');
+const models = require('./models')
 
-//schema database
-var GpsSchema = mongoose.Schema({
-    uuid_user: Number,
-    timestamp: Date,
-    lattitude: Number,
-    longitude: Number,
-    altitude: Number,
-    altitudeAccuracy: Number,
-    heading: Number,
-    speed: Number,
-});
-
-var coorGPS = mongoose.model('CoordGPS', GpsSchema);
 
 var db = mongoose.connection
 
@@ -29,7 +17,7 @@ mongoose.connect('mongodb://localhost/saga')
 
 // Define ROUTE
 app.use('/alerts', alerts())
-app.use('/location', gps(coorGPS))
+app.use('/location', gps(models.coorGPS))
 
 // Server connection
 const server = app.listen(3000, function() {
