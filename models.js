@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema
 
-//schema database
-var GpsSchema = mongoose.Schema({
+// coorGPS database schema
+const coorGPS = mongoose.model('CoordGPS', new Schema({
     uuid_user: Number,
     timestamp: Date,
     lattitude: Number,
@@ -10,8 +11,16 @@ var GpsSchema = mongoose.Schema({
     altitudeAccuracy: Number,
     heading: Number,
     speed: Number,
-});
+}))
 
-var coorGPS = mongoose.model('CoordGPS', GpsSchema);
+// set up a mongoose model and pass it using module.exports
+const userSchema = mongoose.model('User', new Schema({
+    name: String,
+    password: String,
+    admin: Boolean
+}))
 
-module.exports = { coorGPS: coorGPS }
+module.exports = {
+    coorGPS: coorGPS,
+    User: userSchema
+}
