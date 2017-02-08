@@ -35,13 +35,11 @@ app.use(bodyParser.json())
 app.use(morgan('dev'))
 
 /*  =================================
-    AUTHENTICATED ROUTES
+    ROUTES
     =================================*/
 
-app.use('/api', authentication) // following routes will require authentication
 app.use('/alerts', alerts())
 app.use('/location', gps(models.coorGPS))
-
 
 /*  =================================
     DEVELOPMENT SETUP
@@ -63,6 +61,13 @@ app.get('/setup', function(req, res) {
         res.json({ success: true })
     })
 })
+
+/*  =================================
+    AUTHENTICATED ROUTES
+    =================================*/
+
+app.use('/api', authentication) // following routes will require authentication
+
 
 /*  =================================
     SERVER CONFIGURATION 
