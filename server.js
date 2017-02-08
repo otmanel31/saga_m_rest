@@ -29,7 +29,7 @@ mongoose.connect('mongodb://localhost/saga')
 
 // Define ROUTE
 app.use('/alerts', alerts())
-app.use('/gps', gps(coorGPS))
+app.use('/location', gps(coorGPS))
 
 // Server connection
 const server = app.listen(3000, function() {

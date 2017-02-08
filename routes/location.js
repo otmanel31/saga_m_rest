@@ -1,13 +1,34 @@
-//route /gps
+//route /location
 const express = require('express')
 const app = express.Router()
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
 module.exports = (coorGPS) => {
-    app.get('/:uuid_user', (req, res) => {
-        console.log(req.url)
-        res.send("Connected to route gps")
+
+    app.get('/', (req, res) => {
+        coorGPS.find(null, function(err, allcoord) {
+            if (err) {
+                throw err;
+                res.status(404).end()
+            } else {
+                res.status(200)
+                res.send(allcoord).end()
+            }
+        })
+    })
+
+    app.get('/:uuidUser', (req, res) => {
+        let uuidUser = req.param('uuidUser')
+        coorGPS.find({ uuid_user: uuidUser }, function(err, coordOneUser) {
+            if (err) {
+                throw err;
+                res.status(404).end()
+            } else {
+                res.status(200)
+                res.send(coordOneUser).end()
+            }
+        })
     })
 
     app.post('/:uuid_user', (req, res) => {
@@ -33,7 +54,7 @@ module.exports = (coorGPS) => {
                 //console.log(gpsCoordonnees)
                 let uuid = gpsCoordonnees.uuid_user
                 console.log('GPS coordinates created! uuid = ' + uuid);
-                res.setHeader('Location', '/gps/' + uuid);
+                res.setHeader('Location', '/location/' + uuid);
                 res.status(201).end()
             }
 
