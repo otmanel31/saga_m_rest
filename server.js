@@ -10,6 +10,8 @@ const app = express()
 const path = require('path')
 
 const alerts = require('./routes/alerts')
+const events = require('./routes/events')
+
 const gps = require('./routes/location')
 const models = require('./models')
 const config = require('./config')
@@ -40,6 +42,7 @@ app.use(morgan('dev'));
     =================================*/
 app.use('/alerts', alerts())
 app.use('/location', gps(models.coorGPS))
+app.use('/events', events(db))
 
 
 /*  =================================
@@ -54,8 +57,10 @@ const credentials = { key: privateKey, cert: certificate }
 const httpServer = http.createServer(app)
 const httpsServer = https.createServer(credentials, app)
 
+
+
 httpServer.listen(8080, function() {
-    console.log('Server HTTP started')
+    console.log('Server HTTP started on port 8080')
 })
 
 httpsServer.listen(8443, function() {
