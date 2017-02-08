@@ -14,7 +14,9 @@ const gps = require('./routes/location')
 const models = require('./models')
 const config = require('./config')
 
-/* APP CONFIGURATION */
+/*  =================================
+    APP CONFIGURATION 
+    =================================*/
 
 // Mongo Database connection
 const db = mongoose.connection
@@ -33,11 +35,16 @@ app.use(bodyParser.json());
 // use morgan to log requests to the console
 app.use(morgan('dev'));
 
-// global routes
+/*  =================================
+    ROUTES
+    =================================*/
 app.use('/alerts', alerts())
 app.use('/location', gps(models.coorGPS))
 
-/* SERVER CONFIGURATION */
+
+/*  =================================
+    SERVER CONFIGURATION 
+    =================================*/
 
 // HTTPS credentials
 const privateKey = fs.readFileSync('sslcert/key.pem', 'utf8')
