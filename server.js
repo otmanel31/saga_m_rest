@@ -1,6 +1,9 @@
 const fs = require('fs')
 const http = require('http')
 const https = require('https')
+var bodyParser = require('body-parser');
+var morgan = require('morgan');
+const mongoose = require('mongoose');
 
 const express = require('express')
 const app = express()
@@ -8,28 +11,38 @@ const path = require('path')
 
 const alerts = require('./routes/alerts')
 const gps = require('./routes/location')
-const mongoose = require('mongoose');
 const models = require('./models')
+const config = require('./config')
 
+/* APP CONFIGURATION */
 
-var db = mongoose.connection
-
+// Mongo Database connection
+const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
 db.once('open', function() {
     console.log("connected on DB SAGA")
 })
-mongoose.connect('mongodb://localhost/saga')
+mongoose.connect(config.database)
 
-// Define ROUTE
+app.set('superSecret', config.secret); // secret variable
 
+// use body parser so we can get info from POST and/or URL parameters
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+// use morgan to log requests to the console
+app.use(morgan('dev'));
+
+// global routes
+app.use('/alerts', alerts())
+app.use('/location', gps(models.coorGPS))
+
+/* SERVER CONFIGURATION */
+
+// HTTPS credentials
 const privateKey = fs.readFileSync('sslcert/key.pem', 'utf8')
 const certificate = fs.readFileSync('sslcert/cert.pem', 'utf8')
 const credentials = { key: privateKey, cert: certificate }
-
-// your express configuration here
-// add middleware
-app.use('/alerts', alerts())
-app.use('/location', gps(models.coorGPS))
 
 const httpServer = http.createServer(app)
 const httpsServer = https.createServer(credentials, app)
