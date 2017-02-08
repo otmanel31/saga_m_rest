@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Event</title>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.4.0/list.min.js"></script>-->
+</head>
+
+<body>
+    <!--<form id='myForm'onsubmit='save_event(this); return false'>-->
+    <form id='myForm' enctype="multipart/form-data">
+        <label for='list_event'>Type event</label>
+        <select name='list_event' id='list_event'>
+        <option>colision</option>
+        <option>crash</option>
+        <option>accident</option>
+    </select><br/>
+        <textarea name='text_event' rows='10' cols='50'>
+    </textarea><br/>
+        <input type='file' id='file_event' name='file_event' /><br/>
+        <span id='prev'></span>
+        <button type='submit'>Envoyer</button>
+    </form>
+    <script>
+        function createThumbnail(file) {
+            var reader = new FileReader()
+            reader.addEventListener('load', function() {
+                //affichage de  limg
+                var img_element = document.createElement('img')
+                img_element.style.maxWidth = '100px'
+                img_element.style.maxHeight = '100px'
+                img_element.src = this.result
+                preview.appendChild(img_element)
+
+            })
+            reader.readAsDataURL(file)
+        }
+        var allowedType = ['jpg', 'jpeg']
+        var inputFile = document.getElementById('file_event')
+        var preview = document.getElementById('prev')
+        inputFile.addEventListener('change', function() {
+            console.log('in listren input')
+            var files = this.files
+            var filesLen = files.length
+            var imgType
+            for (var i = 0; i < filesLen; i++) {
+                imgType = files[i].name.split('.')
+                imgType = imgType[imgType.length - 1]
+                if (allowedType.indexOf(imgType) != -1) {
+                    //affichage preview
+                    createThumbnail(files[i])
+                }
+            }
+
+        })
+
+        function save_event(form) {
+            console.log('in save form', form)
+            var form_data = new FormData()
+            form_data.append('type', form.list_event.value)
+            form_data.append('text_event', form.text_event.value)
+            form_data.append('file', inputFile.files[0])
+                /*let payload = {}
+                payload['type'] = form.list_event.value
+                payload['text_event'] = form.text_event.value
+                payload['file'] = form.file_event.value
+                */
+                //console.log('my payload', payload) 
+            console.log('my formdata ', form_data)
+                //var myHeaders = new Headers()
+                //myHeaders.append('Content-Type', 'application/json')
+            var myInit = {
+                method: 'POST',
+                //  headers: myHeaders,
+                body: form_data //JSON.stringify(form_data)
+            }
+            var myRequest = new Request('events', myInit)
+            fetch(myRequest).then(function(res) {
+                if (res.ok) {
+                    console.log('data send')
+                }
+            })
+        }
+        document.addEventListener('DOMContentLoaded', function(e) {
+            var myForm = document.getElementById('myForm')
+            myForm.onsubmit = function(e) {
+                e.preventDefault()
+                save_event(this)
+            }
+        })
+    </script>
+</body>
+
+</html>
