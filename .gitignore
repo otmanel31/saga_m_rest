@@ -2,3 +2,4 @@ node_modules/
 routes/upload
 *.swp
 *.swo
+npm-debug.log
