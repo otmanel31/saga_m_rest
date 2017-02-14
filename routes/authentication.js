@@ -9,7 +9,7 @@ const authRoutes = express.Router()
 // authentication (no middleware necessary since this isnt authenticated)
 // ---------------------------------------------------------
 // http://localhost:8080/api/authenticate
-authRoutes.post('/authenticate', function(req, res) {
+authRoutes.post('/', function(req, res) {
 
     // find the user
     User.findOne({
@@ -48,7 +48,7 @@ authRoutes.post('/authenticate', function(req, res) {
 // ---------------------------------------------------------
 // route middleware to authenticate and check token
 // ---------------------------------------------------------
-authRoutes.use(function(req, res, next) {
+authenticationMiddlware = function(req, res, next) {
 
     // check header or url parameters or post parameters for token
     var token = req.body.token || req.param('token') || req.headers['x-access-token']
@@ -78,7 +78,7 @@ authRoutes.use(function(req, res, next) {
 
     }
 
-})
+}
 
 // ---------------------------------------------------------
 // authenticated routes

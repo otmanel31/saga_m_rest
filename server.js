@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
 const express = require('express')
+const expressJWT = require('express-jwt')
 const app = express()
 const path = require('path')
 
@@ -33,11 +34,12 @@ app.use(bodyParser.json())
 
 // use morgan to log requests to the console
 app.use(morgan('dev'))
+app.use(expressJWT({ secret: config.secret }.except({ routes: ['authentication', '/route/to/exclude'] })))
 
 /*  =================================
     ROUTES
     =================================*/
-
+app.use('/authenticate', authentication)
 app.use('/alerts', alerts())
 app.use('/location', gps(models.coorGPS))
 
@@ -61,13 +63,6 @@ app.get('/setup', function(req, res) {
         res.json({ success: true })
     })
 })
-
-/*  =================================
-    AUTHENTICATED ROUTES
-    =================================*/
-
-app.use('/api', authentication) // following routes will require authentication
-
 
 /*  =================================
     SERVER CONFIGURATION 
