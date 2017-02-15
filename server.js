@@ -4,6 +4,7 @@ const https = require('https')
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
 const mongoose = require('mongoose');
+const socket = require('socket.io')
 
 const express = require('express')
 const app = express()
@@ -38,7 +39,7 @@ app.use(morgan('dev'));
 /*  =================================
     ROUTES
     =================================*/
-app.use('/alerts', alerts())
+app.use('/alerts', alerts(models.Alert))
 app.use('/location', gps(models.coorGPS))
 
 
@@ -60,4 +61,12 @@ httpServer.listen(8080, function() {
 
 httpsServer.listen(8443, function() {
     console.log('Server HTTPS started')
+})
+
+// loading socket.io
+var io = socket.listen(httpServer);
+
+io.on('connection', function(socket) {
+    console.log('Client connected')
+    socket.emit('alert', { message: 'Hello Client', alert: false })
 })
