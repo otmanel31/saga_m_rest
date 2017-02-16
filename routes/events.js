@@ -15,7 +15,7 @@ module.exports = (db) => {
         res.sendFile(path.join(__dirname + '/event.html'))
     })
     app.post('/', (req, res) => {
-        // console.log(req)
+        console.log('passage in the events')
         console.log(inspect(req.body))
         console.log('received ' + JSON.stringify(req.body))
         let event = new Event()
@@ -51,17 +51,7 @@ module.exports = (db) => {
             var file = filename.split('/')
             console.log('file name',file)
         })
-       // event.img.data = req.body.data
-        //event.img.contentType = 'image/jpg'
-        /*event.save(function(err, events) {
-                console.log('in save')
-                if (err) console.log(err)
-                console.log(events)
-                console.log(inspect(events))
-                console.log('end')
-            })*/
            // fs.unlink(new_location+'/tmp/'+file[2])
-            //res.setHeader('Location', 'samarche'))
     })
     app.get('/list', (req, res) => {
         res.send('listes')
