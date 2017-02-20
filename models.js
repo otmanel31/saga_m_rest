@@ -20,7 +20,17 @@ const userSchema = mongoose.model('User', new Schema({
     admin: Boolean
 }))
 
+
+// alertModel database schema
+const alertModel = mongoose.model('alert', new Schema({
+    uuid_user: Number,
+    title: String,
+    body: String
+}))
+
+
 module.exports = {
     coorGPS: coorGPS,
-    User: userSchema
+    User: userSchema,
+    Alert: alertModel
 }

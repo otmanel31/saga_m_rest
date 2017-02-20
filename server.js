@@ -4,6 +4,8 @@ const https = require('https')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
+const socket = require('socket.io')
+
 const express = require('express')
 const expressJWT = require('express-jwt')
 const app = express()
@@ -42,7 +44,7 @@ app.use(expressJWT({ secret: config.secret }.except({ routes: ['authentication',
     ROUTES
     =================================*/
 app.use('/authenticate', authentication)
-app.use('/alerts', alerts())
+app.use('/alerts', alerts(models.Alert))
 app.use('/location', gps(models.coorGPS))
 app.use('/events', events(db))
 
@@ -87,4 +89,12 @@ httpServer.listen(8080, function() {
 
 httpsServer.listen(8443, function() {
     console.log('Server HTTPS started')
+})
+
+// loading socket.io
+var io = socket.listen(httpServer);
+
+io.on('connection', function(socket) {
+    console.log('Client connected')
+    socket.emit('alert', { message: 'Hello Client', alert: false })
 })
