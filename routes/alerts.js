@@ -20,7 +20,6 @@ module.exports = (Alert) => {
     //######################################
     // GET  /alert/          : get all messages
     // GET  /alert/:uidUser  : get messages by uid
-    // POST /alert/          : send message to all user
     // POST /alert/:uidUser  : send message to one user to Google cloud messaging and store in database mongodb
     //######################################
 
@@ -62,7 +61,8 @@ module.exports = (Alert) => {
         };
 
         // This registration token comes from the client FCM SDKs.
-        var registrationToken = "eVsXE6yn_20:APA91bHHDDb7lJH-sK5bxbiDl2qJhIBO-KXGQvju5-RYg45ImNOr5lMq5VWeCm_mN4B3Tvg9DyXO_cKbwQqon0qICR5ZfAOCI0SHkgWSplqgbII7mLCje46t5rTZa-xzBIbyhMhMFlhc";
+        // read in database user
+        var registrationToken = "";
 
 
         admin.messaging().sendToDevice(registrationToken, payload)
