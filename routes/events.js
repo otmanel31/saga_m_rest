@@ -22,7 +22,7 @@ module.exports = (db) => {
         let form = new formidable.IncomingForm()
         form.parse(req, function(err, fields, files) {
                 console.log('data received\n\n')
-                console.log(inspect({ fields: fields, files: files }))
+                console.log(inspect({ fields: fields, files: files} ))
                 console.log('fields type ',inspect(fields.type))
                 event.type_event = fields.type
                 event.textarea = fields.text_event 
@@ -35,23 +35,25 @@ module.exports = (db) => {
             var temp_path = this.openedFiles[0].path
             var filename = this.openedFiles[0].path
             var new_location = path.join(__dirname, '/upload')
-            fs.copy(temp_path, new_location + filename, function(err) {
-                if (err) console.log(err)
-                console.log('copy succes')
-                event.img.data = fs2.readFileSync(new_location + filename)
+        console.log('temp path',temp_path)
+            //fs.copy(temp_path, new_location + filename, function(err) {
+             //   if (err) console.log(err)
+               // console.log('copy succes')
+                //event.img.data = fs2.readFileSync(new_location + filename)
+                event.img.data = fs2.readFileSync(temp_path)
                 event.save(function(err, events) {
                     console.log('in save')
                     console.log(events)
                     console.log('with inspect in save', inspect(events))
                 })
-            })
+           // })
             console.log(new_location+filename)
             console.log(new_location)
             console.log(filename)
             var file = filename.split('/')
             console.log('file name',file)
         })
-           // fs.unlink(new_location+'/tmp/'+file[2])
+          // fs2.unlink(new_location+'/tmp/'+file[2])
     })
     app.get('/list', (req, res) => {
         res.send('listes')
@@ -63,6 +65,7 @@ module.exports = (db) => {
             if (err) return console.error(err)
                 //res.contentType(doc.img.contentType)
                 //let i = new Buffer(doc.img.data, 'binary')
+            console.log(doc.img.data)
             res.send(doc.img.data)
         })
     })
