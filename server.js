@@ -4,8 +4,6 @@ const https = require('https')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
-const socket = require('socket.io')
-
 const express = require('express')
 const expressJWT = require('express-jwt')
 const config = require('config')
