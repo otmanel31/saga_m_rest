@@ -73,7 +73,7 @@ app.use('/authenticate', jwtCheckMiddleware, authentication.routes)
     =================================*/
 app.use('/alerts', jwtCheckMiddleware, alerts())
 app.use('/location', jwtCheckMiddleware, gps(models.coorGPS))
-app.use('/events', jwtCheckMiddleware, events(db))
+app.use('/events', events(db))
 
 // Global error handling
 app.use(function(err, req, res, next) {

@@ -125,7 +125,7 @@ module.exports = (Alert) => {
         let ack = req.body.acknowledge
 
         // find 
-        Alert.findOneAndUpdate({ _id: req.params.uidAlert }, )
+        Alert.findOneAndUpdate({ _id: req.params.uidAlert } )
 
 
     })
