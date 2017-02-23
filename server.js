@@ -4,6 +4,8 @@ const https = require('https')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
+const socket = require('socket.io')
+
 const express = require('express')
 const expressJWT = require('express-jwt')
 const config = require('config')
@@ -36,7 +38,6 @@ mongoose.connect(config.database)
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-// use morgan to log requests to the console
 //don't show the log when it is test
 if (config.util.getEnv('NODE_ENV') !== 'test') {
     //use morgan to log at command line
