@@ -126,6 +126,7 @@ module.exports = (Alert) => {
 
         // find 
         Alert.findOneAndUpdate({ _id: req.params.uidAlert } )
+        //Alert.findOneAndUpdate({ _id: req.params.uidAlert }, )
 
 
     })
