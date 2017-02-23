@@ -6,6 +6,12 @@ app.use(bodyParser.json());
 
 module.exports = (coorGPS) => {
 
+    //######################################
+    // GET  /location/          : get all GPS coordinate
+    // GET  /location/:uidUser  : get location by uidUser
+    // POST /location/:uidUser  : send GPS coordinate in database mongodb
+    //######################################
+
     app.get('/', (req, res) => {
         coorGPS.find(null, function(err, allcoord) {
             if (err) {

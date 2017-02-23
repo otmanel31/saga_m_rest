@@ -18,11 +18,15 @@ admin.initializeApp({
 module.exports = (Alert) => {
 
     //######################################
-    // GET  /alert/          : get all messages
-    // GET  /alert/:uidUser  : get messages by uid
-    // POST /alert/:uidUser  : send message to one user to Google cloud messaging and store in database mongodb
+    // GET  /alert/                     : get all messages
+    // GET  /alert/:uidUser             : get messages by uid
+    // POST /alert/:uidUser             : send message to one user to Google cloud messaging and store in database mongodb
+    // PUT  /alert/:uidUser/ack/:uidAck : Update Acknowledge alert to uidUser
     //######################################
 
+    /*-------------------------------------------
+     GET all messages
+     -------------------------------------------*/
     app.get('/', (req, res) => {
         Alert.find({}, function(err, alert) {
             if (err) {
@@ -35,6 +39,10 @@ module.exports = (Alert) => {
         })
     })
 
+
+    /*-------------------------------------------
+     GET message only uidUser
+     -------------------------------------------*/
     app.get('/:uidUser', (req, res) => {
         Alert.find({ uuid_user: req.params.uidUser }, function(err, alert) {
             if (err) {
@@ -47,6 +55,15 @@ module.exports = (Alert) => {
         })
     })
 
+    /*-------------------------------------------
+     External API for SAGA
+     Post an alert on only uidUser
+     format body :
+        {
+            title : xxxxx
+            body  : xxxxx
+        }
+     -------------------------------------------*/
     app.post('/:uidUser', function(req, res) {
         // Send a message to the device corresponding to the provided
         // registration token.
@@ -61,25 +78,23 @@ module.exports = (Alert) => {
         };
 
         // This registration token comes from the client FCM SDKs.
-        // read in database user
+        // It is stored when authentification
+
         var registrationToken = "";
 
 
+        // send message to device with registrationToken
         admin.messaging().sendToDevice(registrationToken, payload)
             .then(function(response) {
                 // See the MessagingDevicesResponse reference documentation for
                 // the contents of response.
-                console.log("Successfully sent message:", response);
-                res.status(201)
-                res.send("Successfully sent message")
-
-
 
                 // create a new alert
                 var AlertMessage = Alert({
                     uuid_user: req.body.uuid_user,
                     title: req.body.title,
-                    body: req.body.body
+                    body: req.body.body,
+                    ack: False
                 });
 
                 // Save a new alert in database
@@ -88,14 +103,31 @@ module.exports = (Alert) => {
                         throw err;
                         res.status(500).end()
                     } else {
-                        let uuid = AlertSended.uuid_user
-                        console.log('New alert created! uuid = ' + uuid);
+                        console.log('New alert created! uuid = ' + AlertSended._id);
+                        res.location("/alert/" + AlertSended._id);
+                        res.status(201)
+                        res.send("Successfully sent message")
                     }
                 })
 
             }).catch(function(error) {
                 console.log("Error sending message:", error);
             });
+    })
+
+
+    /*-------------------------------------------
+     Acknowlege Alert
+     -------------------------------------------
+     Recieve in body : acknowledge : true or false */
+
+    app.patch('/ack/:uidAlert', function(req, res) {
+        let ack = req.body.acknowledge
+
+        // find 
+        Alert.findOneAndUpdate({ _id: req.params.uidAlert }, )
+
+
     })
 
 

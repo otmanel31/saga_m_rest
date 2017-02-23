@@ -17,7 +17,8 @@ const coorGPS = mongoose.model('CoordGPS', new Schema({
 const userSchema = mongoose.model('User', new Schema({
     name: String,
     password: String,
-    admin: Boolean
+    admin: Boolean,
+    tokenGCM: String
 }))
 
 
@@ -25,7 +26,8 @@ const userSchema = mongoose.model('User', new Schema({
 const alertModel = mongoose.model('alert', new Schema({
     uuid_user: Number,
     title: String,
-    body: String
+    body: String,
+    ack: Boolean
 }))
 
 
