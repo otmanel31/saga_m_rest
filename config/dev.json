@@ -1,0 +1,4 @@
+{
+    "secret": "fullstack",
+    "database": "mongodb://localhost/saga"
+}
