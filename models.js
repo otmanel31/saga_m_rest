@@ -17,10 +17,22 @@ const coorGPS = mongoose.model('CoordGPS', new Schema({
 const userSchema = mongoose.model('User', new Schema({
     name: String,
     password: String,
-    admin: Boolean
+    admin: Boolean,
+    tokenGCM: String
 }))
+
+
+// alertModel database schema
+const alertModel = mongoose.model('alert', new Schema({
+    uuid_user: Number,
+    title: String,
+    body: String,
+    ack: Boolean
+}))
+
 
 module.exports = {
     coorGPS: coorGPS,
-    User: userSchema
+    User: userSchema,
+    Alert: alertModel
 }

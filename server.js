@@ -5,8 +5,11 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
 const express = require('express')
-const app = express()
+const expressJWT = require('express-jwt')
+const config = require('config')
 const path = require('path')
+
+const app = express()
 
 const alerts = require('./routes/alerts')
 const events = require('./routes/events')
@@ -15,7 +18,7 @@ const gps = require('./routes/location')
 const authentication = require('./routes/authentication')
 
 const models = require('./models')
-const config = require('./config')
+const jwtCheckMiddleware = expressJWT({ secret: config.get('secret') }).unless({path: ['/authenticate']})
 
 /*  =================================
     APP CONFIGURATION 
@@ -33,16 +36,11 @@ mongoose.connect(config.database)
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-// use morgan to log requests to the console
-app.use(morgan('dev'))
-
-/*  =================================
-    ROUTES
-    =================================*/
-
-app.use('/alerts', alerts())
-app.use('/location', gps(models.coorGPS))
-app.use('/events', events(db))
+//don't show the log when it is test
+if (config.util.getEnv('NODE_ENV') !== 'test') {
+    //use morgan to log at command line
+    app.use(morgan('dev'))
+}
 
 /*  =================================
     DEVELOPMENT SETUP
@@ -66,11 +64,24 @@ app.get('/setup', function(req, res) {
 })
 
 /*  =================================
-    AUTHENTICATED ROUTES
+    PULIC ROUTES
     =================================*/
+app.use('/authenticate', jwtCheckMiddleware, authentication.routes)
 
-app.use('/api', authentication) // following routes will require authentication
+/*  =================================
+    PRIVATE ROUTES
+    =================================*/
+app.use('/alerts', jwtCheckMiddleware, alerts())
+app.use('/location', jwtCheckMiddleware, gps(models.coorGPS))
+app.use('/events', jwtCheckMiddleware, events(db))
 
+// Global error handling
+app.use(function(err, req, res, next) {
+    // JWT Error handling
+    if (err.name === 'UnauthorizedError') {
+        res.status(401).send('invalid token...');
+    }
+})
 
 /*  =================================
     SERVER CONFIGURATION 
@@ -83,8 +94,6 @@ const credentials = { key: privateKey, cert: certificate }
 
 const httpServer = http.createServer(app)
 const httpsServer = https.createServer(credentials, app)
-
-
 
 httpServer.listen(8080, function() {
     console.log('Server HTTP started on port 8080')
