@@ -18,7 +18,10 @@ const gps = require('./routes/location')
 const authentication = require('./routes/authentication')
 
 const models = require('./models')
-const jwtCheckMiddleware = expressJWT({ secret: config.get('secret') }).unless({path: ['/authenticate']})
+const jwtCheckMiddleware = expressJWT({ secret: config.get('secret') }).unless({ path: ['/authenticate'] })
+
+// dev mode databse initialisation
+const setupDev = require('./setup_dev')
 
 /*  =================================
     APP CONFIGURATION 
@@ -45,23 +48,15 @@ if (config.util.getEnv('NODE_ENV') !== 'test') {
 /*  =================================
     DEVELOPMENT SETUP
     =================================*/
-app.get('/setup', function(req, res) {
-
-    // create a sample user
-    let foo = new models.User({
-        name: 'Bar',
-        password: 'password',
-        admin: false
+if (config.util.getEnv('NODE_ENV') === 'dev') {
+    app.get('/setup', function(req, res) {
+console.log('/setup')
+        setupDev(function(err, message) {
+            if (err) res.sendStatus(500)
+            res.json(message)
+        })
     })
-
-    // save the sample user
-    foo.save(function(err) {
-        if (err) throw err
-
-        console.log('User saved successfully')
-        res.json({ success: true })
-    })
-})
+}
 
 /*  =================================
     PULIC ROUTES
