@@ -15,13 +15,13 @@ admin.initializeApp({
 });
 
 
-module.exports = (Alert) => {
+module.exports = (Alert, Users) => {
 
     //######################################
-    // GET  /alert/                     : get all messages
-    // GET  /alert/:uidUser             : get messages by uid
-    // POST /alert/:uidUser             : send message to one user to Google cloud messaging and store in database mongodb
-    // PUT  /alert/:uidUser/ack/:uidAck : Update Acknowledge alert to uidUser
+    // GET   /alert/                     : get all messages
+    // GET   /alert/:uidUser             : get messages by uid
+    // POST  /alert/:uidUser             : send message to one user to Google cloud messaging and store in database mongodb
+    // PATCH /alert/:uidAck              : Update Acknowledge alert 
     //######################################
 
     /*-------------------------------------------
@@ -64,6 +64,8 @@ module.exports = (Alert) => {
             body  : xxxxx
         }
      -------------------------------------------*/
+
+
     app.post('/:uidUser', function(req, res) {
         // Send a message to the device corresponding to the provided
         // registration token.
@@ -78,57 +80,73 @@ module.exports = (Alert) => {
         };
 
         // This registration token comes from the client FCM SDKs.
-        // It is stored when authentification
+        // It is stored when a user has logged
+        Users.findById(req.params.uidUser, function(err, user) {
+            if (err) {
+                throw err;
+                res.status(404).end()
+            } else {
+                console.log(user)
+                if (!user.tokenGCM) {
+                    console.log("echec")
+                    res.status(404).end()
+                } else {
+                    // Get token Google Cloud messaging in database
+                    var registrationToken = user.tokenGCM;
+                    console.log("token GCM : " + registrationToken)
 
-        var registrationToken = "";
+                    // send message to device with registrationToken
+                    admin.messaging().sendToDevice(registrationToken, payload)
+                        .then(function(response) {
+                            // See the MessagingDevicesResponse reference documentation for
+                            // the contents of response.
+
+                            // create a new alert
+                            var AlertMessage = Alert({
+                                uuid_user: req.body.uuid_user,
+                                title: req.body.title,
+                                body: req.body.body,
+                                ack: false
+                            });
+
+                            // Save a new alert in database
+                            AlertMessage.save(function(err, AlertSaved) {
+                                if (err) {
+                                    throw err;
+                                    res.status(500).end()
+                                } else {
+                                    console.log('New alert created! uuid = ' + AlertSaved._id);
+                                    res.location("/alert/" + AlertSaved._id);
+                                    res.status(201)
+                                    res.send("Successfully sent message")
+                                }
+                            })
+
+                        }).catch(function(error) {
+                            console.log("Error sending message:", error);
+                        });
 
 
-        // send message to device with registrationToken
-        admin.messaging().sendToDevice(registrationToken, payload)
-            .then(function(response) {
-                // See the MessagingDevicesResponse reference documentation for
-                // the contents of response.
+                }
+            }
+        })
 
-                // create a new alert
-                var AlertMessage = Alert({
-                    uuid_user: req.body.uuid_user,
-                    title: req.body.title,
-                    body: req.body.body,
-                    ack: False
-                });
-
-                // Save a new alert in database
-                AlertMessage.save(function(err, AlertSended) {
-                    if (err) {
-                        throw err;
-                        res.status(500).end()
-                    } else {
-                        console.log('New alert created! uuid = ' + AlertSended._id);
-                        res.location("/alert/" + AlertSended._id);
-                        res.status(201)
-                        res.send("Successfully sent message")
-                    }
-                })
-
-            }).catch(function(error) {
-                console.log("Error sending message:", error);
-            });
     })
 
 
     /*-------------------------------------------
      Acknowlege Alert
      -------------------------------------------
-     Recieve in body : acknowledge : true or false */
+     Receive in body : acknowledge : true or false */
 
     app.patch('/ack/:uidAlert', function(req, res) {
-        let ack = req.body.acknowledge
+        let ack_save = req.body.acknowledge
 
         // find 
-        Alert.findOneAndUpdate({ _id: req.params.uidAlert } )
-        //Alert.findOneAndUpdate({ _id: req.params.uidAlert }, )
-
-
+        Alert.findByIdAndUpdate(req.params.uidAlert, { ack: ack_save }, function(err, doc) {
+            res.status(200)
+            res.send("Patch OK")
+        })
     })
 
 

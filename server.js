@@ -23,6 +23,7 @@ const jwtCheckMiddleware = expressJWT({ secret: config.get('secret') }).unless({
 // dev mode databse initialisation
 const setupDev = require('./setup_dev')
 
+
 /*  =================================
     APP CONFIGURATION 
     =================================*/
@@ -50,7 +51,7 @@ if (config.util.getEnv('NODE_ENV') !== 'test') {
     =================================*/
 if (config.util.getEnv('NODE_ENV') === 'dev') {
     app.get('/setup', function(req, res) {
-console.log('/setup')
+        console.log('/setup')
         setupDev(function(err, message) {
             if (err) res.sendStatus(500)
             res.json(message)
@@ -66,7 +67,7 @@ app.use('/authenticate', jwtCheckMiddleware, authentication.routes)
 /*  =================================
     PRIVATE ROUTES
     =================================*/
-app.use('/alerts', jwtCheckMiddleware, alerts())
+app.use('/alerts', jwtCheckMiddleware, alerts(models.Alert, models.User))
 app.use('/location', jwtCheckMiddleware, gps(models.coorGPS))
 app.use('/events', events(db))
 
@@ -99,4 +100,4 @@ httpsServer.listen(8443, function() {
 })
 
 // for unit testing
-module.exports = httpServer; 
+module.exports = httpServer;
