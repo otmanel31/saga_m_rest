@@ -97,3 +97,6 @@ httpServer.listen(8080, function() {
 httpsServer.listen(8443, function() {
     console.log('Server HTTPS started')
 })
+
+// for unit testing
+module.exports = httpServer; 
