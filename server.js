@@ -18,7 +18,7 @@ const gps = require('./routes/location')
 const authentication = require('./routes/authentication')
 
 const models = require('./models')
-const jwtCheckMiddleware = expressJWT({ secret: config.get('secret') }).unless({path: ['/authenticate']})
+const jwtCheckMiddleware = expressJWT({ secret: config.get('secret') }).unless({ path: ['/authenticate'] })
 
 /*  =================================
     APP CONFIGURATION 
@@ -71,7 +71,7 @@ app.use('/authenticate', jwtCheckMiddleware, authentication.routes)
 /*  =================================
     PRIVATE ROUTES
     =================================*/
-app.use('/alerts', jwtCheckMiddleware, alerts())
+app.use('/alerts', jwtCheckMiddleware, alerts(models.Alert, models.User))
 app.use('/location', jwtCheckMiddleware, gps(models.coorGPS))
 app.use('/events', jwtCheckMiddleware, events(db))
 
