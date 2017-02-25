@@ -14,7 +14,10 @@ const app = express()
 const alerts = require('./routes/alerts')
 const events = require('./routes/events')
 
-const gps = require('./routes/location')
+const sagaAlert = require('./routes/saga_routes/saga_alerts')
+const sagaLocation = require('./routes/saga_routes/saga_location')
+
+const location = require('./routes/location')
 const authentication = require('./routes/authentication')
 
 const models = require('./models')
@@ -68,8 +71,15 @@ app.use('/authenticate', jwtCheckMiddleware, authentication.routes)
     PRIVATE ROUTES
     =================================*/
 app.use('/alerts', jwtCheckMiddleware, alerts(models.Alert, models.User))
-app.use('/location', jwtCheckMiddleware, gps(models.coorGPS))
+app.use('/location', jwtCheckMiddleware, location(models.coorGPS))
 app.use('/events', events(db))
+
+/*  =================================
+    SAGA ROUTES
+    =================================*/
+app.use('/saga/alerts', sagaAlert(models.Alert, models.User))
+app.use('/saga/location', sagaLocation(models.Alert, models.User))
+
 
 // Global error handling
 app.use(function(err, req, res, next) {

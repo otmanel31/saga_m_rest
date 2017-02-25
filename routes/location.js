@@ -7,35 +7,8 @@ app.use(bodyParser.json());
 module.exports = (coorGPS) => {
 
     //######################################
-    // GET  /location/          : get all GPS coordinate
-    // GET  /location/:uidUser  : get location by uidUser
     // POST /location/:uidUser  : send GPS coordinate in database mongodb
     //######################################
-
-    app.get('/', (req, res) => {
-        coorGPS.find(null, function(err, allcoord) {
-            if (err) {
-                throw err;
-                res.status(404).end()
-            } else {
-                res.status(200)
-                res.send(allcoord).end()
-            }
-        })
-    })
-
-    app.get('/:uuidUser', (req, res) => {
-        let uuidUser = req.param('uuidUser')
-        coorGPS.find({ uuid_user: uuidUser }, function(err, coordOneUser) {
-            if (err) {
-                throw err;
-                res.status(404).end()
-            } else {
-                res.status(200)
-                res.send(coordOneUser).end()
-            }
-        })
-    })
 
     app.post('/:uuid_user', (req, res) => {
 
