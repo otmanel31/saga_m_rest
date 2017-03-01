@@ -78,7 +78,7 @@ app.use('/events', events(db))
     SAGA ROUTES
     =================================*/
 app.use('/saga/alerts', sagaAlert(models.Alert, models.User))
-app.use('/saga/location', sagaLocation(models.Alert, models.User))
+app.use('/saga/location', sagaLocation(models.coorGPS, models.User))
 
 
 // Global error handling

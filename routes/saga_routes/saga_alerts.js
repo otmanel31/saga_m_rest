@@ -82,8 +82,7 @@ module.exports = (Alert, Users) => {
         // It is stored when a user has logged
         Users.findById(req.params.uidUser, function(err, user) {
             if (err) {
-                throw err;
-                res.status(404).end()
+                res.status(404).end('User not found')
             } else {
                 console.log(user)
                 if (!user.tokenGCM) {

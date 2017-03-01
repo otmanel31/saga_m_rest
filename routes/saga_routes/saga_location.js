@@ -30,7 +30,7 @@ module.exports = (coorGPS) => {
     // Get location by id in database (GET /location/:uuidUser)
     //---------------------------------------
     app.get('/:uuidUser', (req, res) => {
-        let uuidUser = req.param('uuidUser')
+        let uuidUser = req.params.uuidUser
         coorGPS.find({ uuid_user: uuidUser }, function(err, coordOneUser) {
             if (err) {
                 throw err;

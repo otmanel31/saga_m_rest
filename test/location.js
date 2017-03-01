@@ -16,7 +16,7 @@ chai.use(chaiHttp)
 chai.use(require('chai-datetime'));
 
 //Our parent block
-describe('location', () => {
+describe('location route testing', () => {
     var token = ''
 
     before((done) => {

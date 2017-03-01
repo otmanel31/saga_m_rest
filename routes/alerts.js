@@ -34,10 +34,9 @@ module.exports = (Alert, Users) => {
      Receive in body : acknowledge : true or false */
 
     app.patch('/ack/:uidAlert', function(req, res) {
-        let ack_save = req.body.acknowledge
 
         // find 
-        Alert.findByIdAndUpdate(req.params.uidAlert, { ack: ack_save }, function(err, doc) {
+        Alert.findByIdAndUpdate(req.params.uidAlert, { ack: true }, function(err, doc) {
             res.status(200)
             res.send("Patch OK")
         })

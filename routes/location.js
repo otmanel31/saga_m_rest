@@ -33,7 +33,7 @@ module.exports = (coorGPS) => {
                 } else {
                     //console.log(gpsCoordonnees)
                     let uuid = gpsCoordonnees.uuid_user
-                    console.log('GPS coordinates created! uuid = ' + uuid);
+                    //console.log('GPS coordinates created! uuid = ' + uuid);
                     res.setHeader('Location', '/location/' + uuid);
                     res.status(201).end()
                 }
