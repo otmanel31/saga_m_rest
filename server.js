@@ -50,7 +50,6 @@ if (config.util.getEnv('NODE_ENV') !== 'test') {
     =================================*/
 if (config.util.getEnv('NODE_ENV') === 'dev') {
     app.get('/setup', function(req, res) {
-console.log('/setup')
         setupDev(function(err, message) {
             if (err) res.sendStatus(500)
             res.json(message)
@@ -68,7 +67,7 @@ app.use('/authenticate', jwtCheckMiddleware, authentication.routes)
     =================================*/
 app.use('/alerts', jwtCheckMiddleware, alerts())
 app.use('/location', jwtCheckMiddleware, gps(models.coorGPS))
-app.use('/events', events(db))
+app.use('/events', jwtCheckMiddleware, events(db))
 
 // Global error handling
 app.use(function(err, req, res, next) {
@@ -99,4 +98,4 @@ httpsServer.listen(8443, function() {
 })
 
 // for unit testing
-module.exports = httpServer; 
+module.exports = httpServer;

@@ -22,6 +22,7 @@ describe('User', () => {
             done()
         })
 
+        // initialize database with dummy datas
         setup((err, msg) => {
             if (err)
                 console.log('Authentication Test Error : ' + err)
@@ -29,7 +30,7 @@ describe('User', () => {
     })
 
     /*
-     * Test the /GET route
+     * Test the /POST authenticate
      */
     describe('/POST authenticate', () => {
         it('it should send user token', (done) => {
