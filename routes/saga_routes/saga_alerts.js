@@ -101,7 +101,7 @@ module.exports = (Alert, Users) => {
 
                             // create a new alert
                             var AlertMessage = Alert({
-                                uuid_user: req.body.uuid_user,
+                                uuid_user: req.params.uidUser,
                                 title: req.body.title,
                                 body: req.body.body,
                                 ack: false

@@ -4,6 +4,7 @@ process.env.NODE_ENV = 'test'
 
 let mongoose = require("mongoose")
 let Alert = require('../models').Alert
+let User = require('../models').User
 
 //Require the dev-dependencies
 let chai = require('chai')
@@ -65,6 +66,15 @@ describe('SAGA Alert Route testing', () => {
         //remove alerts collection
         Alert.remove()
         done()
+    })
+
+    after((done) => {
+        User.remove({}, (err) => {
+            if (err) {
+                console.log(err)
+            }
+            done()
+        })
     })
 
 

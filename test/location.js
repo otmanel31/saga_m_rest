@@ -3,6 +3,7 @@ process.env.NODE_ENV = 'test'
 
 let mongoose = require("mongoose")
 let coorGPS = require('../models').coorGPS
+let User = require('../models').User
 
 //Require the dev-dependencies
 let chai = require('chai')
@@ -47,6 +48,15 @@ describe('location route testing', () => {
     beforeEach(() => {
         //Before each test we empty the database
         coorGPS.remove({}, (err) => {})
+    })
+
+    after((done) => {
+        User.remove({}, (err) => {
+            if (err) {
+                console.log(err)
+            }
+            done()
+        })
     })
 
     /*

@@ -8,6 +8,7 @@ const express = require('express')
 const expressJWT = require('express-jwt')
 const config = require('config')
 const path = require('path')
+const inspect = require('util').inspect
 
 const app = express()
 
@@ -62,15 +63,30 @@ if (config.util.getEnv('NODE_ENV') === 'dev') {
     })
 }
 
+// Midleware for CORS enable
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Headers","Authorization");
+  res.header("Access-Control-Allow-Origin","*");
+  res.header("Access-Control-Allow-Methods","PATCH,GET");
+  
+  next();
+});
+
 /*  =================================
     PULIC ROUTES
     =================================*/
 app.use('/authenticate', jwtCheckMiddleware, authentication.routes)
 
+// let log_middleware = function (req, res, next) {
+//     console.log('Log Midleware !!!!')
+//     console.log(inspect(req.headers))
+//     next()
+// }
+
 /*  =================================
     PRIVATE ROUTES
     =================================*/
-app.use('/alerts', jwtCheckMiddleware, alerts(models.Alert, models.User))
+app.use('/alerts',  jwtCheckMiddleware, alerts(models.Alert))
 app.use('/location', jwtCheckMiddleware, location(models.coorGPS))
 app.use('/events', events(db))
 
