@@ -4,6 +4,7 @@ process.env.NODE_ENV = 'test'
 
 let mongoose = require("mongoose")
 let Alert = require('../models').Alert
+let User = require('../models').User
 
 //Require the dev-dependencies
 let chai = require('chai')
@@ -18,12 +19,17 @@ chai.use(chaiHttp)
 //Our parent block
 describe('Alert Route testing', () => {
     var token = ''
+    var uid_user = ''
 
     before((done) => {
 
-        setup((err, msg) => {
-            if (err)
+        setup((err, msg, user) => {
+            if (err) {
                 console.log('Authentication Test Error : ' + err)
+            } else {
+                // get uid from user saved
+                uid_user = user._id
+            }
         })
 
         //Before each test we get a authenticate token
@@ -54,14 +60,21 @@ describe('Alert Route testing', () => {
         })
     })
 
+    after((done) => {
+        User.remove({}, (err) => {
+            if (err) {
+                console.log(err)
+            }
+            done()
+        })
+    })
+
     /*
      * Test the /GET route
      */
     describe('/GET alert by uid_user', () => {
 
         it('it should return alert of uid_user', (done) => {
-            let uid_user = 123
-
             // Store alert in database
             let AlertExample = new Alert({
                 uuid_user: uid_user,
@@ -76,7 +89,7 @@ describe('Alert Route testing', () => {
 
             // send GET request
             chai.request(server)
-                .get('/alerts/' + uid_user)
+                .get('/alerts/self')
                 .set('Authorization', 'Bearer ' + token)
                 .end((err, res) => {
                     res.should.have.status(200)
@@ -90,7 +103,6 @@ describe('Alert Route testing', () => {
         })
 
         it('it should update true acknowledge', (done) => {
-            let uid_user = 123
 
             // Store alert in database
             let AlertExample = new Alert({
@@ -107,7 +119,7 @@ describe('Alert Route testing', () => {
 
                 // send PATCH request
                 chai.request(server)
-                    .patch('/alerts/ack/' + uid_alert)
+                    .patch('/alerts/self/ack/' + uid_alert)
                     .set('Authorization', 'Bearer ' + token)
                     .end((err, res) => {
                         // verify acknowledge is true

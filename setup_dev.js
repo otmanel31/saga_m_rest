@@ -15,11 +15,12 @@ setup = function(callback) {
     console.log('/setup inside')
 
     // save the sample user
-    foo.save(function(err) {
+    foo.save(function(err, user) {
         if (err) {
             callback(err)
         } else {
-            callback(null, { success: true })
+            callback(null, { success: true }, user)
+            
         }
     })
 }

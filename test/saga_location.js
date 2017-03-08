@@ -3,6 +3,7 @@ process.env.NODE_ENV = 'test'
 
 let mongoose = require("mongoose")
 let coorGPS = require('../models').coorGPS
+let User = require('../models').User
 
 //Require the dev-dependencies
 let chai = require('chai')
@@ -65,6 +66,15 @@ describe('SAGA location route testing', () => {
                 example_coorGPS.save()
             }
         }
+    })
+
+    after((done) => {
+        User.remove({}, (err) => {
+            if (err) {
+                console.log(err)
+            }
+            done()
+        })
     })
 
     /*

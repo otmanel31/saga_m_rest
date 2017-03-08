@@ -24,7 +24,7 @@ const userSchema = mongoose.model('User', new Schema({
 
 // alertModel database schema
 const alertModel = mongoose.model('alert', new Schema({
-    uuid_user: Number,
+    uuid_user: String,
     title: String,
     body: String,
     ack: Boolean
