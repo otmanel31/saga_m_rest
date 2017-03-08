@@ -3,6 +3,7 @@
 const express = require('express')
 const app = express.Router()
 const admin = require("firebase-admin")
+const inspect = require('util').inspect
 
 
 //Path key private service Account 
@@ -71,6 +72,8 @@ module.exports = (Alert, Users) => {
 
         // See the "Defining the message payload" section below for details
         // on how to define a message payload.
+        //console.log("requete recue" + inspect(req))
+
         var payload = {
             notification: {
                 title: req.body.title,
@@ -78,6 +81,7 @@ module.exports = (Alert, Users) => {
             }
         };
 
+        console.log("payload ++++++++" + inspect(payload))
         // This registration token comes from the client FCM SDKs.
         // It is stored when a user has logged
         Users.findById(req.params.uidUser, function(err, user) {

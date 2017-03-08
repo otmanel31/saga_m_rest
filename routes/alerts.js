@@ -43,7 +43,7 @@ module.exports = (Alert) => {
         Alert.findByIdAndUpdate(req.params.uidAlert, { ack: true }, function(err, doc) {
             if(uidUser == doc.uuid_user){
                 res.status(200)
-                res.send("Patch OK")
+                res.send(doc)
             } else {
                 // uidUser not exist
                 res.status(404)

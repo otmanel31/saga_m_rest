@@ -12,12 +12,12 @@ const inspect = require('util').inspect
 
 const app = express()
 
-const alerts = require('./routes/alerts')
-const events = require('./routes/events')
-
 const sagaAlert = require('./routes/saga_routes/saga_alerts')
 const sagaLocation = require('./routes/saga_routes/saga_location')
+const sagaUsers = require('./routes/saga_routes/saga_users')
 
+const alerts = require('./routes/alerts')
+const events = require('./routes/events')
 const location = require('./routes/location')
 const authentication = require('./routes/authentication')
 
@@ -65,9 +65,9 @@ if (config.util.getEnv('NODE_ENV') === 'dev') {
 
 // Midleware for CORS enable
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Headers","Authorization");
+  res.header("Access-Control-Allow-Headers","Authorization, content-type");
   res.header("Access-Control-Allow-Origin","*");
-  res.header("Access-Control-Allow-Methods","PATCH,GET");
+  res.header("Access-Control-Allow-Methods","PATCH,GET,POST");
   
   next();
 });
@@ -77,11 +77,11 @@ app.use(function(req, res, next) {
     =================================*/
 app.use('/authenticate', jwtCheckMiddleware, authentication.routes)
 
-// let log_middleware = function (req, res, next) {
-//     console.log('Log Midleware !!!!')
-//     console.log(inspect(req.headers))
-//     next()
-// }
+let log_middleware = function (req, res, next) {
+    console.log('Log Midleware !!!!')
+    console.log(inspect(req.body))
+    next()
+}
 
 /*  =================================
     PRIVATE ROUTES
@@ -93,8 +93,9 @@ app.use('/events', events(db))
 /*  =================================
     SAGA ROUTES
     =================================*/
-app.use('/saga/alerts', sagaAlert(models.Alert, models.User))
-app.use('/saga/location', sagaLocation(models.coorGPS, models.User))
+app.use('/saga/alerts', log_middleware, sagaAlert( models.Alert, models.User))
+app.use('/saga/location', sagaLocation(models.coorGPS))
+app.use('/saga/users', sagaUsers(models.User))
 
 
 // Global error handling
