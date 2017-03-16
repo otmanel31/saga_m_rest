@@ -70,6 +70,12 @@ module.exports = (db) => {
         //res.json(event)
         })
     })
+    app.get('/type_event', (req, res)=>{
+        TypeEvent.find(function(err, type){
+            if (err) return console.error(err)
+            res.json(type)
+        })
+    })
     app.get('/:id', (req, res) => {
         event = new Event()
         console.log(req.params.id)
@@ -81,13 +87,8 @@ module.exports = (db) => {
             res.send(doc.img.data)
         })
     })
-    app.get('/type_event', (req, res)=>{
-        TypeEvent.find(function(err, type){
-            if (err) return console.error(err)
-            res.json(type)
-        })
-    })
-
+    
+/*
     app.put('/set_type', (req, res)=>{
         let file = fs2.readFileSync(__dirname + '/type_events.json', 'utf8')
         console.log(inspect(file))
@@ -111,6 +112,6 @@ module.exports = (db) => {
             })
         })
         
-    })
+    })*/
     return app
 }
