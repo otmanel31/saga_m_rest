@@ -4,14 +4,11 @@ const app = express()
 const path = require('path')
 const inspect = require('util').inspect
 const bodyParser = require('body-parser')
+const Event = require('./event_model')
 const formidable = require('formidable')
 const fs = require('fs-extra')
 
-const Event = require('./event_model').Event
-const TypeEvent = require('./event_model').TypeEvent
-
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended:true}))
 
 module.exports = (db) => {
     app.get('/', (req, res) => {
@@ -19,13 +16,15 @@ module.exports = (db) => {
     })
     app.post('/', (req, res) => {
         console.log('passage in the events')
-
+        console.log(inspect(req.body))
+        console.log('received ' + JSON.stringify(req.body))
         let event = new Event()
         let form = new formidable.IncomingForm()
         form.parse(req, function(err, fields, files) {
                 console.log('data received\n\n')
                 console.log(inspect({ fields: fields, files: files} ))
                 console.log('fields type ',inspect(fields.type))
+                console.log('fields location', inspect(fields.longitude))
                 event.type_event = fields.type
                 event.textarea = fields.text_event
                 event.position_event.longitude = fields.longitude
@@ -80,37 +79,6 @@ module.exports = (db) => {
             console.log(doc.img.data)
             res.send(doc.img.data)
         })
-    })
-    app.get('/type_event', (req, res)=>{
-        TypeEvent.find(function(err, type){
-            if (err) return console.error(err)
-            res.json(type)
-        })
-    })
-
-    app.put('/set_type', (req, res)=>{
-        let file = fs2.readFileSync(__dirname + '/type_events.json', 'utf8')
-        console.log(inspect(file))
-        let fileP  = JSON.parse(file)
-        console.log(fileP)
-        //res.send(fileP.type)
-        var type_now;
-        TypeEvent.find(function(err, type){
-            if (err) return console.error(err)
-            
-            type.map((elt)=>{
-                console.log(elt._id)
-                type_now = elt._id
-                return type_now
-            })
-           // console.log('t  ', type_now)
-            
-            TypeEvent.findByIdAndUpdate(type_now,{type: fileP.type}, function(err, t){
-                if (err) console.error(err)
-                res.status(200).end()
-            })
-        })
-        
     })
     return app
 }
