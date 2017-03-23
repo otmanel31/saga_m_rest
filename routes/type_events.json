@@ -1,0 +1,11 @@
+{
+    "type":[
+        "obstructions detection",
+        "colision between aircrafts",
+        "colision between aircraft and vehicule",
+        "colision between aircraft and obstuction ",
+        "colision between aircraft and controlled vehicules",
+        "colision between aircraft vehicules and obstructions",
+        "vehicule breakdown"
+    ]
+}   
