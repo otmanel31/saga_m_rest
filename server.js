@@ -63,7 +63,7 @@ if (config.util.getEnv('NODE_ENV') === 'dev') {
 
 // Midleware for CORS enable
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Headers","Authorization, content-type");
+  res.header("Access-Control-Allow-Headers","Authorization, Content-Type");
   res.header("Access-Control-Allow-Origin","*");
   res.header("Access-Control-Allow-Methods","PATCH,GET,POST");
   
