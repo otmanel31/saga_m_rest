@@ -6,14 +6,23 @@ const inspect = require('util').inspect
 const bodyParser = require('body-parser')
 const formidable = require('formidable')
 const fs = require('fs-extra')
+const responseTime = require('response-time')
 
 const Event = require('./event_model').Event
 const TypeEvent = require('./event_model').TypeEvent
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
-
+    /*res.on('header', function(){
+        let duration = Date.now() - req.date
+        res.setHeader('X-Response-Time', duration)
+    })*/
 module.exports = (db) => {
+    app.use(responseTime())
+    app.use((req, res, next)=>{
+        req.date = Date.now()
+        next()
+    })
     app.get('/', (req, res) => {
         res.sendFile(path.join(__dirname + '/event.html'))
     })
@@ -58,6 +67,8 @@ module.exports = (db) => {
           // fs2.unlink(new_location+'/tmp/'+file[2])
     })
     app.get('/list', (req, res) => {
+        let startTime = Date.now()
+
         let user = {}
         Event.find(function(err, event){
             if (err) return console.error(err)
@@ -66,10 +77,21 @@ module.exports = (db) => {
                 user[ev._id]=ev
             })
         console.log('in my user ',user)
+        console.log('chiiiwaaawaaaa')
+        //let end = Date.now()
+        //let duree = end - startTime
+      //  let duree = 0
         res.send(user)
-        //res.json(event)
+        /*console.log('starting timer')
+        console.log('starting data: ',startTime)
+        let end = Date.now()
+        duree += end - startTime
+        console.log('end od my request', end)
+        console.log(duree)*/
+     //   res.json(event)
         })
     })
+
     app.get('/type_event', (req, res)=>{
         TypeEvent.find(function(err, type){
             if (err) return console.error(err)
