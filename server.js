@@ -60,7 +60,6 @@ if (config.util.getEnv('NODE_ENV') === 'dev') {
         })
     })
 }
-
 // Midleware for CORS enable
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers","Authorization, Content-Type");
