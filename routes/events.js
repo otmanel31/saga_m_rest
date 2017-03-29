@@ -6,7 +6,7 @@ const inspect = require('util').inspect
 const bodyParser = require('body-parser')
 const formidable = require('formidable')
 const fs = require('fs-extra')
-const responseTime = require('response-time')
+//const responseTime = require('response-time')
 
 const Event = require('./event_model').Event
 const TypeEvent = require('./event_model').TypeEvent
@@ -18,11 +18,11 @@ app.use(bodyParser.urlencoded({extended:true}))
         res.setHeader('X-Response-Time', duration)
     })*/
 module.exports = (db) => {
-    app.use(responseTime())
+  /*  app.use(responseTime())
     app.use((req, res, next)=>{
         req.date = Date.now()
         next()
-    })
+    })*/
     app.get('/', (req, res) => {
         res.sendFile(path.join(__dirname + '/event.html'))
     })
@@ -53,9 +53,15 @@ module.exports = (db) => {
                 //event.img.data = fs2.readFileSync(new_location + filename)
                 event.img.data = fs2.readFileSync(temp_path)
                 event.save(function(err, events) {
-                    console.log('in save')
-                    console.log(events)
-                    console.log('with inspect in save', inspect(events))
+                    if (err){
+                        res.status(500).end()
+                    }
+                        console.log('in save')
+                        console.log(events)
+                        console.log('with inspect in save', inspect(events))
+                        res.status(200).end()
+ 
+                    
                 })
            // })
             console.log(new_location+filename)
@@ -67,8 +73,6 @@ module.exports = (db) => {
           // fs2.unlink(new_location+'/tmp/'+file[2])
     })
     app.get('/list', (req, res) => {
-        let startTime = Date.now()
-
         let user = {}
         Event.find(function(err, event){
             if (err) return console.error(err)
@@ -78,16 +82,7 @@ module.exports = (db) => {
             })
         console.log('in my user ',user)
         console.log('chiiiwaaawaaaa')
-        //let end = Date.now()
-        //let duree = end - startTime
-      //  let duree = 0
         res.send(user)
-        /*console.log('starting timer')
-        console.log('starting data: ',startTime)
-        let end = Date.now()
-        duree += end - startTime
-        console.log('end od my request', end)
-        console.log(duree)*/
      //   res.json(event)
         })
     })

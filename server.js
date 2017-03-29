@@ -65,7 +65,6 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers","Authorization, Content-Type");
   res.header("Access-Control-Allow-Origin","*");
   res.header("Access-Control-Allow-Methods","PATCH,GET,POST");
-  
   next();
 });
 
@@ -85,7 +84,7 @@ let log_middleware = function (req, res, next) {
     =================================*/
 app.use('/alerts',  jwtCheckMiddleware, alerts(models.Alert))
 app.use('/location', jwtCheckMiddleware, location(models.coorGPS))
-app.use('/events', jwtCheckMiddleware, events(db))
+app.use('/events',log_middleware, jwtCheckMiddleware, events(db))
 
 /*  =================================
     SAGA ROUTES
